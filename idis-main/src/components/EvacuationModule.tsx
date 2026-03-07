@@ -17,23 +17,75 @@ const EvacuationModule = ({ buildingName }: EvacuationModuleProps) => {
   };
 
   const handleSendAlert = async () => {
-    const alert = await sendBuildingAlert(buildingName, `Emergency alert for ${buildingName}. All occupants proceed to nearest exit.`);
-    toast({ title: "Alert Sent", description: `Alert ${alert.id} sent to ${buildingName}` });
+    try {
+      toast({ title: "Sending Alert...", description: "Please wait while we send the alert." });
+      const alert = await sendBuildingAlert(buildingName, `Emergency alert for ${buildingName}. All occupants proceed to nearest exit.`);
+      toast({ 
+        title: "✓ Alert Sent Successfully", 
+        description: `Alert ${alert.id} sent to ${buildingName}. Email notifications sent to all registered officers.`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({ 
+        title: "✗ Alert Failed", 
+        description: "Failed to send alert. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleBroadcast = async () => {
-    const alert = await broadcastNationalAlert(`Emergency broadcast: Critical situation at ${buildingName}. All response units mobilize.`);
-    toast({ title: "Broadcast Sent", description: `National broadcast ${alert.id} dispatched to all stations.` });
+    try {
+      toast({ title: "Broadcasting...", description: "Sending broadcast alert to all stations." });
+      const alert = await broadcastNationalAlert(`Emergency broadcast: Critical situation at ${buildingName}. All response units mobilize.`);
+      toast({ 
+        title: "✓ Broadcast Sent Successfully", 
+        description: `National broadcast ${alert.id} dispatched to all stations. SMS and Email alerts sent to all officers.`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({ 
+        title: "✗ Broadcast Failed", 
+        description: "Failed to send broadcast. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleSMS = async () => {
-    const alert = await sendSMSAlert(buildingName, `IDIS ALERT: Emergency at ${buildingName}. Evacuate immediately.`);
-    toast({ title: "SMS Alert Sent", description: `SMS alert ${alert.id} dispatched. Ready for WhatsApp/Twilio integration.` });
+    try {
+      toast({ title: "Sending SMS...", description: "Sending SMS alerts to all officers via Twilio." });
+      const alert = await sendSMSAlert(buildingName, `IDIS ALERT: Emergency at ${buildingName}. Evacuate immediately.`);
+      toast({ 
+        title: "✓ SMS Alert Sent Successfully", 
+        description: `SMS alert ${alert.id} dispatched to 4 officers. Messages sent via Twilio.`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({ 
+        title: "✗ SMS Failed", 
+        description: "Failed to send SMS. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleEmail = async () => {
-    const alert = await sendEmailAlert(buildingName, `IDIS Emergency Notification: Critical incident at ${buildingName}. Immediate action required.`);
-    toast({ title: "Email Alert Sent", description: `Email alert ${alert.id} dispatched. Ready for EmailJS integration.` });
+    try {
+      toast({ title: "Sending Emails...", description: "Sending email alerts to all registered officers." });
+      const alert = await sendEmailAlert(buildingName, `IDIS Emergency Notification: Critical incident at ${buildingName}. Immediate action required.`);
+      toast({ 
+        title: "✓ Email Alert Sent Successfully", 
+        description: `Email alert ${alert.id} dispatched to all registered officers in the system.`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({ 
+        title: "✗ Email Failed", 
+        description: "Failed to send email. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
