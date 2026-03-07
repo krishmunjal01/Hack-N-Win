@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuth } from "@/auth/AuthContext";
 import { getRoleLabel, getRoleAccent } from "@/services/authService";
 import { ChevronRight, Home } from "lucide-react";
@@ -66,6 +67,7 @@ const DashboardLayout = () => {
               </nav>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageSwitcher />
               <span className="h-2 w-2 rounded-full bg-stage-safe animate-pulse-glow" />
               <div className="text-right hidden md:block">
                 <span className="text-xs text-muted-foreground">{user?.name}</span>

@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Shield, Activity, Brain, Radio, MapPin, ArrowRight, Building2, AlertTriangle, Users, Cpu, Wifi, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const features = [
   { icon: Brain, title: "AI-Based Risk Escalation", desc: "Machine learning models predict disaster escalation in real-time using multi-sensor fusion." },
@@ -19,6 +21,7 @@ const stats = [
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -39,11 +42,12 @@ const Landing = () => {
             </span>
           </button>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Button variant="ghost" onClick={() => navigate("/citizen")}>
-              Citizen Portal
+              {t("citizen_portal")}
             </Button>
             <Button onClick={() => navigate("/auth/login")}>
-              Officer Login
+              {t("login")}
             </Button>
           </div>
         </div>
@@ -67,13 +71,13 @@ const Landing = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" onClick={() => navigate("/auth/login")} className="gap-2">
-                  Officer Login <ArrowRight size={16} />
+                  {t("login")} <ArrowRight size={16} />
                 </Button>
                 <Button size="lg" variant="outline" onClick={() => navigate("/citizen")}>
-                  Citizen Portal
+                  {t("citizen_portal")}
                 </Button>
                 <Button size="lg" variant="secondary" onClick={() => navigate("/contributex")}>
-                  ContriButeX Initiative
+                  {t("contribute")}
                 </Button>
               </div>
             </div>

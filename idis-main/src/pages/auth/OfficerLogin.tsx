@@ -6,9 +6,12 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/auth/AuthContext";
 import { login, verifyOTP, getCurrentUser, getRedirectPath, AuthUser } from "@/services/authService";
 import { toast } from "@/hooks/use-toast";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const OfficerLogin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { loginUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -112,11 +115,14 @@ const OfficerLogin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6 animate-fade-in">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 animate-fade-in relative">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Shield className="mx-auto text-primary mb-4" size={40} />
-          <h1 className="text-2xl font-bold text-foreground">Officer Login</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("login")}</h1>
           <p className="text-sm text-muted-foreground mt-1">National Integrated Disaster Intelligence System</p>
         </div>
         <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-card p-6 space-y-4 shadow-sm">
@@ -136,7 +142,7 @@ const OfficerLogin = () => {
           </Button>
           <div className="flex justify-between text-sm">
             <button type="button" className="text-primary hover:underline" onClick={() => navigate("/auth/forgot-password")}>Forgot Password?</button>
-            <button type="button" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => navigate("/auth/register")}>Register</button>
+            <button type="button" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => navigate("/auth/register")}>{t("register")}</button>
           </div>
           <div className="border-t border-border pt-4">
             <Button type="button" variant="outline" className="w-full" onClick={() => navigate("/auth/admin-login")}>Admin Login</Button>

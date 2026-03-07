@@ -6,9 +6,11 @@ import {
 import { NationalStats, StateRisk, getNationalStats, getStateRisks } from "@/services/analyticsService";
 import { getStageColor } from "@/data/mockData";
 import IndiaMap from "@/components/IndiaMap";
+import { useTranslation } from "react-i18next";
 
 const NationalControlCenter = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<NationalStats | null>(null);
   const [states, setStates] = useState<StateRisk[]>([]);
   const [filter, setFilter] = useState<string>("all");
@@ -26,12 +28,12 @@ const NationalControlCenter = () => {
 
   const statCards = stats
     ? [
-        { icon: Building2, label: "Total Buildings", value: stats.totalBuildings.toLocaleString(), color: "text-primary" },
-        { icon: AlertTriangle, label: "Critical Incidents", value: stats.criticalIncidents.toString(), color: "text-stage-critical" },
-        { icon: Siren, label: "Active Alerts", value: stats.activeAlerts.toString(), color: "text-stage-alert" },
-        { icon: Shield, label: "States Monitored", value: stats.statesMonitored.toString(), color: "text-primary" },
-        { icon: Activity, label: "Avg Risk Index", value: stats.avgRiskIndex.toString(), color: "text-stage-danger" },
-        { icon: TrendingUp, label: "Evacuations Today", value: stats.evacuationsToday.toString(), color: "text-stage-critical" },
+        { icon: Building2, label: t("ncc_total_buildings"), value: stats.totalBuildings.toLocaleString(), color: "text-primary" },
+        { icon: AlertTriangle, label: t("ncc_critical_incidents"), value: stats.criticalIncidents.toString(), color: "text-stage-critical" },
+        { icon: Siren, label: t("ncc_active_alerts"), value: stats.activeAlerts.toString(), color: "text-stage-alert" },
+        { icon: Shield, label: t("ncc_states_monitored"), value: stats.statesMonitored.toString(), color: "text-primary" },
+        { icon: Activity, label: t("ncc_avg_risk_index"), value: stats.avgRiskIndex.toString(), color: "text-stage-danger" },
+        { icon: TrendingUp, label: t("ncc_evacuations_today"), value: stats.evacuationsToday.toString(), color: "text-stage-critical" },
       ]
     : [];
 
@@ -46,8 +48,8 @@ const NationalControlCenter = () => {
   return (
     <div className="p-6 md:p-8 space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">National Control Center</h1>
-        <p className="text-sm text-muted-foreground">Real-time disaster intelligence overview across India</p>
+        <h1 className="text-2xl font-bold text-foreground">{t("ncc_title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("ncc_subtitle")}</p>
       </div>
 
       {/* Stats Grid */}
@@ -64,7 +66,7 @@ const NationalControlCenter = () => {
       {/* India Map + Active Alerts */}
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-4 shadow-sm">
-          <h3 className="text-lg font-bold text-foreground mb-4">India Risk Map</h3>
+          <h3 className="text-lg font-bold text-foreground mb-4">{t("ncc_india_risk_map")}</h3>
           <div className="h-[400px] rounded-lg overflow-hidden">
             <IndiaMap />
           </div>
@@ -72,7 +74,7 @@ const NationalControlCenter = () => {
 
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-            <AlertTriangle size={18} className="text-stage-critical" /> Active Alerts
+            <AlertTriangle size={18} className="text-stage-critical" /> {t("ncc_active_alerts")}
           </h3>
           <div className="space-y-3 max-h-80 overflow-auto">
             {states
@@ -89,8 +91,8 @@ const NationalControlCenter = () => {
                     <span className="h-2 w-2 rounded-full" style={{ backgroundColor: getStageColor(s.stage) }} />
                   </div>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{s.activeAlerts} alerts</span>
-                    <span>Risk: {s.riskScore}</span>
+                    <span>{s.activeAlerts} {t("ncc_alerts")}</span>
+                    <span>{t("ncc_risk")}: {s.riskScore}</span>
                   </div>
                 </button>
               ))}
@@ -100,7 +102,7 @@ const NationalControlCenter = () => {
 
       {/* Filter */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-sm text-muted-foreground">Filter:</span>
+        <span className="text-sm text-muted-foreground">{t("ncc_filter")}:</span>
         {["all", "Normal", "Alert", "Dangerous", "Critical"].map((f) => (
           <button
             key={f}
@@ -111,7 +113,7 @@ const NationalControlCenter = () => {
                 : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
             }`}
           >
-            {f === "all" ? "All States" : f}
+            {f === "all" ? t("ncc_all_states") : t(`ncc_${f.toLowerCase()}`)}
           </button>
         ))}
       </div>
@@ -130,15 +132,15 @@ const NationalControlCenter = () => {
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Risk Score</span>
+                <span className="text-muted-foreground">{t("ncc_risk_score")}</span>
                 <span className="font-mono font-bold" style={{ color: getStageColor(s.stage) }}>{s.riskScore}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Buildings</span>
+                <span className="text-muted-foreground">{t("ncc_buildings")}</span>
                 <span className="text-foreground">{s.buildings.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Active Alerts</span>
+                <span className="text-muted-foreground">{t("ncc_active_alerts")}</span>
                 <span className="text-foreground">{s.activeAlerts}</span>
               </div>
             </div>

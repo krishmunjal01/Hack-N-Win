@@ -5,6 +5,7 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter, useSidebar,
@@ -16,6 +17,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logoutUser();
@@ -29,21 +31,21 @@ export function AppSidebar() {
   const isOfficer = user?.role === "building_authority";
 
   const mainNav = [
-    ...(isNational ? [{ title: "National Control", url: "/dashboard", icon: LayoutDashboard }] : []),
-    ...(isState ? [{ title: "State Command", url: "/dashboard", icon: Map }] : []),
-    ...(isDistrict ? [{ title: "District Dashboard", url: "/dashboard/district", icon: MapPinned }] : []),
-    ...(isOfficer ? [{ title: "Officer Dashboard", url: "/dashboard/officer", icon: LayoutDashboard }] : []),
-    ...(!isNational && !isState && !isDistrict && !isOfficer ? [{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }] : []),
-    { title: "Building Monitor", url: "/dashboard/buildings", icon: Building2 },
-    { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
-    { title: "Alerts", url: "/dashboard/alerts", icon: AlertTriangle },
+    ...(isNational ? [{ title: t("nav_national_control"), url: "/dashboard", icon: LayoutDashboard }] : []),
+    ...(isState ? [{ title: t("nav_state_command"), url: "/dashboard", icon: Map }] : []),
+    ...(isDistrict ? [{ title: t("nav_district_dashboard"), url: "/dashboard/district", icon: MapPinned }] : []),
+    ...(isOfficer ? [{ title: t("nav_officer_dashboard"), url: "/dashboard/officer", icon: LayoutDashboard }] : []),
+    ...(!isNational && !isState && !isDistrict && !isOfficer ? [{ title: t("nav_dashboard"), url: "/dashboard", icon: LayoutDashboard }] : []),
+    { title: t("nav_building_monitor"), url: "/dashboard/buildings", icon: Building2 },
+    { title: t("nav_analytics"), url: "/dashboard/analytics", icon: BarChart3 },
+    { title: t("nav_alerts"), url: "/dashboard/alerts", icon: AlertTriangle },
   ];
 
   const systemNav = [
-    { title: "ContriButeX", url: "/contributex", icon: Globe },
-    { title: "Citizen Portal", url: "/citizen", icon: Users },
-    { title: "Incident Logs", url: "/dashboard/incidents", icon: FileText },
-    { title: "Settings", url: "/dashboard/settings", icon: Settings },
+    { title: t("nav_contributex"), url: "/contributex", icon: Globe },
+    { title: t("nav_citizen_portal"), url: "/citizen", icon: Users },
+    { title: t("nav_incident_logs"), url: "/dashboard/incidents", icon: FileText },
+    { title: t("nav_settings"), url: "/dashboard/settings", icon: Settings },
   ];
 
   return (
@@ -52,9 +54,9 @@ export function AppSidebar() {
         <button onClick={() => navigate("/")} className="flex items-center gap-3 group">
           <Shield className="text-sidebar-primary shrink-0" size={22} />
           {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-sidebar-foreground truncate group-hover:underline underline-offset-2">IDIS National</p>
-              <p className="text-[10px] text-sidebar-foreground/60 uppercase tracking-widest">Command Center</p>
+            <div className="min-w-0 flex-1 text-left">
+              <p className="text-sm font-bold text-sidebar-foreground truncate group-hover:underline underline-offset-2">{t("app_title_national")}</p>
+              <p className="text-[10px] text-sidebar-foreground/60 uppercase tracking-widest">{t("app_subtitle_command")}</p>
             </div>
           )}
         </button>
@@ -62,7 +64,7 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Operations</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("nav_operations")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNav.map((item) => (
@@ -80,7 +82,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("nav_system")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {systemNav.map((item) => (
@@ -109,7 +111,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton onClick={handleLogout} className="text-red-400 hover:bg-red-500/10">
               <LogOut className="mr-2 h-4 w-4" />
-              {!collapsed && <span>Logout</span>}
+              {!collapsed && <span>{t("nav_logout")}</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
