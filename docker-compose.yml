@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./idis-backend/idis-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./idis-main
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80" # Mapping our host port 5173 to Nginx port 80 based on user expectation
+    depends_on:
+      - backend
+    restart: unless-stopped
