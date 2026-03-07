@@ -22,6 +22,7 @@ const DistrictDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState<DistrictInfo | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string>("");
 
   useEffect(() => {
     if (user?.state && user?.district) {
@@ -33,9 +34,15 @@ const DistrictDashboard = () => {
   }, [user]);
 
   const handleDistrictAlert = async () => {
-    if (!district) return;
-    const alert = await sendDistrictAlert(district.name, `District-wide advisory: Elevated risk levels detected in ${district.name}.`);
-    toast({ title: "District Alert Sent", description: `Alert ${alert.id} dispatched to all officers in ${district.name}` });
+    const targetDistrict = district?.name || districtName;
+    const alert = await sendDistrictAlert(targetDistrict, `District-wide advisory: Elevated risk levels detected in ${targetDistrict}.`);
+    setAlertMessage("✓ Sent district wide alert to everyone");
+    toast({
+      title: "Alert Sent Successfully",
+      description: `District-wide alert has been sent to all officers in ${targetDistrict}`,
+    });
+    // Clear the message after 5 seconds
+    setTimeout(() => setAlertMessage(""), 5000);
   };
 
   if (loading) {
@@ -88,9 +95,16 @@ const DistrictDashboard = () => {
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm space-y-4">
           <h3 className="text-lg font-bold text-foreground">Local Emergency Controls</h3>
           <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-start text-stage-alert border-stage-alert/30 hover:bg-stage-alert/10" onClick={handleDistrictAlert}>
-              <Siren size={14} className="mr-2" /> Send District-Wide Alert
-            </Button>
+            <div>
+              <Button variant="outline" className="w-full justify-start text-stage-alert border-stage-alert/30 hover:bg-stage-alert/10" onClick={handleDistrictAlert}>
+                <Siren size={14} className="mr-2" /> Send District-Wide Alert
+              </Button>
+              {alertMessage && (
+                <div className="mt-3 p-4 bg-green-100 border-l-4 border-green-500 rounded-md shadow-md">
+                  <p className="text-sm text-green-900 font-bold">✓ {alertMessage}</p>
+                </div>
+              )}
+            </div>
             <Button variant="outline" className="w-full justify-start" onClick={() => toast({ title: "Officers notified in " + districtName })}>
               <AlertTriangle size={14} className="mr-2" /> Notify Local Officers
             </Button>

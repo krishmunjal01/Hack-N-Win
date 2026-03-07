@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 // Fix leaflet default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -94,6 +95,8 @@ const ContributeX = () => {
   const [trackError, setTrackError] = useState("");
   const [lastTrackingId, setLastTrackingId] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [submittedTrackingId, setSubmittedTrackingId] = useState("");
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -120,7 +123,7 @@ const ContributeX = () => {
     toast({ title: "Location Pinned", description: `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}` });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.buildingName || !form.address || !form.description) {
@@ -129,28 +132,66 @@ const ContributeX = () => {
     }
 
     const trackingId = generateTrackingId();
-    const report: SubmittedReport = {
-      trackingId,
-      buildingName: form.buildingName,
-      category: form.category,
-      status: "submitted",
-      submittedAt: new Date().toISOString(),
-      district: "Nearest District (Auto-assigned)",
-    };
 
-    reportStore[trackingId] = report;
-    setLastTrackingId(trackingId);
+    try {
+      const reportData = {
+        trackingId,
+        buildingName: form.buildingName,
+        address: form.address,
+        category: form.category,
+        description: form.description,
+        anonymous: form.anonymous,
+        reporterName: form.anonymous ? "" : form.reporterName,
+        reporterPhone: form.anonymous ? "" : form.reporterPhone,
+        latitude: pinnedLocation ? pinnedLocation[0] : null,
+        longitude: pinnedLocation ? pinnedLocation[1] : null,
+      };
 
-    toast({
-      title: "Report Submitted Successfully",
-      description: `Tracking ID: ${trackingId}. Your report has been forwarded to the nearest district officer.`,
-    });
+      const response = await fetch("http://localhost:8082/api/reports/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reportData),
+      });
 
-    // Reset form
-    setForm({ buildingName: "", address: "", category: "Fire Hazard", description: "", anonymous: false, reporterName: "", reporterPhone: "" });
-    setFiles([]);
-    setPinnedLocation(null);
-    setShowMap(false);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        const report: SubmittedReport = {
+          trackingId,
+          buildingName: form.buildingName,
+          category: form.category,
+          status: "submitted",
+          submittedAt: new Date().toISOString(),
+          district: "Nearest District (Auto-assigned)",
+        };
+
+        reportStore[trackingId] = report;
+        setLastTrackingId(trackingId);
+        setSubmittedTrackingId(trackingId);
+        setShowConfirmation(true);
+
+        // Reset form
+        setForm({ buildingName: "", address: "", category: "Fire Hazard", description: "", anonymous: false, reporterName: "", reporterPhone: "" });
+        setFiles([]);
+        setPinnedLocation(null);
+        setShowMap(false);
+      } else {
+        toast({
+          title: "Submission Failed",
+          description: result.message || "Failed to submit report. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      toast({
+        title: "Submission Failed",
+        description: "Network error. Please check your connection and try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleTrack = () => {
@@ -418,6 +459,33 @@ const ContributeX = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle size={20} />
+              Report Submitted Successfully
+            </DialogTitle>
+            <DialogDescription>
+              Your report has been submitted and forwarded to the nearest district officer for investigation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-lg bg-muted p-4">
+              <p className="text-sm text-muted-foreground mb-1">Your Tracking ID</p>
+              <p className="text-lg font-mono font-bold text-foreground">{submittedTrackingId}</p>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Use this tracking ID to check the status of your report. You will also receive email updates.
+            </p>
+            <Button onClick={() => setShowConfirmation(false)} className="w-full">
+              Continue
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

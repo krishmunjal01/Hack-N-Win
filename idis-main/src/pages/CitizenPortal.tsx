@@ -123,6 +123,11 @@ const CitizenPortal = () => {
                 <p>Follow IDIS alerts and local emergency broadcasts. Register for NDMA SMS alerts. Keep emergency numbers saved.</p>
               </div>
             </div>
+            <div className="mt-6 pt-6 border-t border-border">
+              <Button onClick={() => navigate("/contributex")} className="w-full">
+                Found an anomaly in building? Report here
+              </Button>
+            </div>
           </div>
         </section>
       </div>

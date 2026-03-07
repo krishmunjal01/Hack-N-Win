@@ -12,6 +12,7 @@ const StateCommand = () => {
   const navigate = useNavigate();
   const [state, setState] = useState<StateInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedDistrict, setSelectedDistrict] = useState<DistrictInfo | null>(null);
 
   useEffect(() => {
     if (stateId) {
@@ -93,7 +94,7 @@ const StateCommand = () => {
         <h3 className="text-lg font-bold text-foreground mb-3">District Breakdown</h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {state.districts.map((d) => (
-            <div key={d.id} className="rounded-lg border border-border bg-card p-5 shadow-sm card-hover">
+            <div key={d.id} className="rounded-lg border border-border bg-card p-5 shadow-sm card-hover cursor-pointer" onClick={() => setSelectedDistrict(d)}>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-bold text-foreground">{d.name}</h4>
                 <span className="h-3 w-3 rounded-full" style={{ backgroundColor: getStageColor(d.stage) }} />
@@ -116,6 +117,21 @@ const StateCommand = () => {
           ))}
         </div>
       </section>
+
+      {/* Selected District Buildings */}
+      {selectedDistrict && (
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-foreground">Buildings in {selectedDistrict.name}</h3>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedDistrict(null)}>Close</Button>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {mockBuildings.slice(0, selectedDistrict.buildings).map((b) => (
+              <BuildingCard key={b.id} building={b} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Building Incidents */}
       <section>

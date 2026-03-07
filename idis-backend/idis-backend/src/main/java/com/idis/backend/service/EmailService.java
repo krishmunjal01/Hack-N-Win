@@ -109,4 +109,37 @@ public class EmailService {
     public void sendBroadcastEmail(String title, String message) {
         sendAlertEmail(title, message, "BROADCAST");
     }
+
+    public void sendReportEmail(String trackingId, String buildingName, String category, String description, String reporterName, String reporterPhone) {
+        try {
+            // Send to specific email and nearest officer
+            String[] recipients = {"bhavyabhugra28@gmail.com", "akshatdubey1102@gmail.com"}; // Add nearest officer logic later
+
+            for (String email : recipients) {
+                try {
+                    SimpleMailMessage mail = new SimpleMailMessage();
+                    mail.setTo(email);
+                    mail.setFrom("hangingshorts@gmail.com");
+                    mail.setSubject("IDIS - New Citizen Report: " + buildingName);
+                    mail.setText("NEW CITIZEN REPORT\n\n"
+                            + "Tracking ID: " + trackingId + "\n"
+                            + "Building: " + buildingName + "\n"
+                            + "Category: " + category + "\n"
+                            + "Description: " + description + "\n"
+                            + "Reporter: " + (reporterName.isEmpty() ? "Anonymous" : reporterName) + "\n"
+                            + "Phone: " + (reporterPhone.isEmpty() ? "Not provided" : reporterPhone) + "\n\n"
+                            + "Please investigate this report immediately.\n\n"
+                            + "National Integrated Disaster Intelligence System (IDIS)");
+
+                    mailSender.send(mail);
+                    System.out.println("✓ Report email sent to: " + email);
+                } catch (Exception emailError) {
+                    System.err.println("✗ Failed to send report to " + email + ": " + emailError.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to send report email: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
