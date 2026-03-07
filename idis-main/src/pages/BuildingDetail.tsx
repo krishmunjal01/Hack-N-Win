@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Wifi, Clock, Loader2 } from "lucide-react";
 import { Building, fetchBuildingData, getStageColor } from "@/data/mockData";
@@ -10,6 +10,7 @@ import EvacuationModule from "@/components/EvacuationModule";
 import IncidentLog from "@/components/IncidentLog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { sendEmailAlert } from "@/services/alertService";
 
 function getSensorStatus(value: number, thresholds: [number, number, number]): Building["stage"] {
   if (value >= thresholds[2]) return "Critical";
@@ -26,6 +27,7 @@ const BuildingDetail = () => {
   const [stage, setStage] = useState<Building["stage"]>("Normal");
   const [riskScore, setRiskScore] = useState(0);
   const [loading, setLoading] = useState(true);
+  const alertedStageRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -39,6 +41,34 @@ const BuildingDetail = () => {
       setLoading(false);
     });
   }, [id]);
+
+  // Automated Alert Hook: Triggers when the building reaches Critical or Dangerous stages.
+  useEffect(() => {
+    if (!building) return;
+    
+    // Only send if we haven't already sent an alert for this stage
+    if ((stage === "Dangerous" || stage === "Critical") && alertedStageRef.current !== stage) {
+      alertedStageRef.current = stage;
+      
+      const message = `Automated Alert: Building ${building.name} stage escalated to ${stage}. Sensor Readings - Temp: ${sensors?.temperature}°C, Gas: ${sensors?.gasLevel}ppm, Vibration: ${sensors?.vibration}g`;
+      
+      sendEmailAlert("All Officers", message)
+        .then(() => {
+          toast({
+            title: `Automated ${stage} Alert Sent`,
+            description: "An email has been dispatched to all officers.",
+            variant: "destructive"
+          });
+        })
+        .catch((err) => {
+          console.error("Automated alert failed", err);
+        });
+    }
+    
+    if (stage === "Normal") {
+      alertedStageRef.current = null; // Reset when returning to normal
+    }
+  }, [stage, building, sensors]);
 
   const simulateFire = useCallback(() => {
     if (!sensors) return;
