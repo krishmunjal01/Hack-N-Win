@@ -1,134 +1,107 @@
-🚀 IDIS Project Setup Guide (For Teammates)
+# National Integrated Disaster Intelligence System (IDIS)
 
-This project has 2 parts:
+[![Frontend](https://img.shields.io/badge/Frontend-React%20%7C%20Vite%20%7C%20Tailwind-blue)](./idis-main)
+[![Backend](https://img.shields.io/badge/Backend-Spring%20Boot%20%7C%20Java%2017-brightgreen)](./idis-backend/idis-backend)
 
-1️⃣ Backend → Spring Boot (Java)
-2️⃣ Frontend → React + Vite
+The **National Integrated Disaster Intelligence System (IDIS)** is a comprehensive disaster management platform designed to provide real-time situational awareness, streamline incident reporting, and facilitate coordinated responses between citizens and government officials.
 
-Both must run together.
+## 🌟 Key Features
 
-Frontend → http://localhost:8080
-Backend  → http://localhost:8081
+- **National & State Control Centers**: Dedicated dashboards for high-level officials to monitor nationwide or state-specific incidents, active alerts, and resource allocation.
+- **Citizen Portal (ContributeX)**: A public-facing interface allowing civilians to report emergencies, view active alerts in their area, and contribute to situational intelligence.
+- **Secure Authentication**: Multi-factor authentication flow with Email and SMS-based OTP verification for government officials and administrators.
+- **Real-time Analytics & Mapping**: Interactive data visualizations and geographical mapping of disaster zones, affected buildings, and resource deployments.
 
-1️⃣ Prerequisites (Install First)
+## 🛠️ Technology Stack
 
-Everyone must install these:
+### Frontend (`idis-main`)
+- **Core**: React 18, Vite, TypeScript
+- **Styling**: Tailwind CSS, Shadcn UI (Radix UI)
+- **State & Data**: TanStack React Query, React Router DOM
+- **Mapping & Charts**: React-Leaflet, Recharts
 
-Install Java (JDK 17)
+### Backend (`idis-backend/idis-backend`)
+- **Core**: Java 17, Spring Boot 3.5.x
+- **Security**: Spring Security
+- **Database**: H2 (In-memory, development) / MySQL Ready
+- **Integrations**: Twilio SDK (SMS OTP), Spring Mail (Email OTP)
 
-Download:
-https://adoptium.net/
+---
 
-Verify installation:
+## 🚀 Getting Started
 
-java -version
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-Should show something like:
+### Prerequisites
 
-openjdk version "17"
+- [Node.js](https://nodejs.org/en/) (v18 or higher)
+- [Java Development Kit (JDK)](https://adoptium.net/) (v17)
+- [Maven](https://maven.apache.org/)
 
-Install Node.js (v18 or v20)
+### 1. Running the Backend
 
-Download:
+1. Navigate to the backend directory:
+   ```bash
+   cd idis-backend/idis-backend
+   ```
+2. Configure your environment:
+   Open `src/main/resources/application.properties` and add your Twilio and Gmail SMTP credentials if you wish to test the OTP flow.
+3. Start the Spring Boot application:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+   *The backend will start on `http://localhost:8082`.*
 
-https://nodejs.org
+### 2. Running the Frontend
 
-Verify:
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd idis-main
+   ```
+2. Install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   *The frontend will be available at `http://localhost:5173`.*
 
-node -v
-npm -v
-Install Maven (Optional but recommended)
+---
 
-Check:
+## 📂 Project Structure
 
-mvn -v
+```text
+Hack-N-Win/
+├── idis-main/                  # Frontend React Application
+│   ├── src/
+│   │   ├── components/         # Reusable UI components
+│   │   ├── pages/              # Application views & dashboards
+│   │   ├── auth/               # Authentication contexts & wrappers
+│   │   └── App.tsx             # Main routing configuration
+│   └── package.json
+└── idis-backend/idis-backend/  # Backend Spring Boot Application
+    ├── src/main/java/.../
+    │   ├── controller/         # REST API endpoints (AuthController)
+    │   ├── model/              # JPA Entities (User, Otp)
+    │   └── repository/         # Database repositories
+    └── pom.xml
+```
 
-If not installed it's fine because the project has mvnw wrapper.
+## 🔐 Security Note
 
-Install Git
+This repository is currently a prototype. Before deploying to production, ensure that:
+- Hardcoded secrets and API keys are migrated to environment variables (`.env`).
+- Plaintext password storage is replaced with BCrypt hashing.
+- A robust JWT or Session-based authentication mechanism is implemented for protected routes.
+- The H2 in-memory database is swapped for a persistent production database (e.g., MySQL, PostgreSQL).
 
-Download:
+## 🤝 Contributing
 
-https://git-scm.com/
+Contributions, issues, and feature requests are welcome! 
+Feel free to check the [issues page](../../issues).
 
-2️⃣ Clone the Project
+## 📄 License
 
-Open terminal and run:
-
-git clone https://github.com/YOUR-REPO-LINK
-
-Then go inside:
-
-cd IDIS
-
-You should see:
-
-frontend/
-backend/
-3️⃣ Run Backend (Spring Boot)
-
-Open terminal inside backend folder:
-
-cd backend
-
-Run backend:
-
-Windows
-mvnw.cmd spring-boot:run
-Mac/Linux
-./mvnw spring-boot:run
-
-If successful you will see:
-
-Tomcat started on port(s): 8081
-
-Backend will run at:
-
-http://localhost:8081
-4️⃣ Run Frontend (React)
-
-Open another terminal.
-
-Go to frontend folder:
-
-cd frontend
-
-Install dependencies:
-
-npm install
-
-Then start frontend:
-
-npm run dev
-
-You will see:
-
-Local: http://localhost:8080
-
-6️⃣ Common Errors & Fixes
-Error: JAVA_HOME not defined
-
-Set environment variable:
-
-JAVA_HOME = C:\Program Files\Java\jdk-17
-
-Restart terminal.
-
-Error: npm install fails
-
-Run:
-
-npm cache clean --force
-npm install
-Error: Backend not connecting
-
-Check backend running:
-
-http://localhost:8081
-
-Check frontend API URL:
-
-http://localhost:8081/api/auth
-Open browser:
-
-http://localhost:8080
+This project is licensed under the MIT License.
